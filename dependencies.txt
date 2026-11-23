@@ -1,0 +1,6 @@
+numpy
+opencv-python
+pyyaml
+pytest
+imageio
+mujoco==3.2.2
