@@ -1,0 +1,143 @@
+<mujoco model="ur5e_pick_place_workcell">
+
+  <!-- Original Menagerie robot model -->
+  <include file="ur5e_local.xml"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6"
+               ambient="0.3 0.3 0.3"
+               specular="0.1 0.1 0.1"/>
+    <global azimuth="135" elevation="-25"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient"
+             rgb1="0.3 0.5 0.7" rgb2="0 0 0"
+             width="512" height="3072"/>
+
+    <texture type="2d" name="ground_texture"
+             builtin="checker"
+             rgb1="0.25 0.28 0.32"
+             rgb2="0.15 0.18 0.22"
+             width="300" height="300"/>
+
+    <material name="ground_material"
+              texture="ground_texture"
+              texrepeat="5 5" reflectance="0.15"/>
+
+    <material name="table_material" rgba="0.35 0.38 0.42 1"/>
+    <material name="leg_material" rgba="0.18 0.20 0.23 1"/>
+    <material name="cube_material" rgba="0.9 0.05 0.05 1"/>
+    <material name="tray_material" rgba="0.15 0.35 0.85 1"/>
+  </asset>
+
+  <worldbody>
+
+    <!-- Lighting and floor -->
+    <light pos="0 -1 2" dir="0 0.4 -1"/>
+    <light pos="0.5 1.0 2" dir="0 -0.4 -1"
+           directional="true"/>
+
+    <geom name="floor"
+          type="plane"
+          size="0 0 0.05"
+          material="ground_material"/>
+
+    <!-- Worktable: top surface is at z = 0.50 m -->
+    <body name="worktable" pos="0 0 0">
+
+      <geom name="table_top"
+            type="box"
+            pos="0.45 0 0.45"
+            size="0.40 0.35 0.05"
+            material="table_material"
+           />
+
+      <!-- Four table legs -->
+      <geom name="leg_front_left"
+            type="box" pos="0.12 -0.30 0.225"
+            size="0.025 0.025 0.225"
+            material="leg_material"/>
+
+      <geom name="leg_front_right"
+            type="box" pos="0.78 -0.30 0.225"
+            size="0.025 0.025 0.225"
+            material="leg_material"/>
+
+      <geom name="leg_back_left"
+            type="box" pos="0.12 0.30 0.225"
+            size="0.025 0.025 0.225"
+            material="leg_material"/>
+
+      <geom name="leg_back_right"
+            type="box" pos="0.78 0.30 0.225"
+            size="0.025 0.025 0.225"
+            material="leg_material"/>
+
+    </body>
+
+    <!-- Dynamic red cube: 5 cm per side -->
+    <body name="red_cube" pos="0.35 -0.12 0.525">
+
+      <freejoint name="cube_free_joint"/>
+
+      <geom name="red_cube_geom"
+            type="box"
+            size="0.025 0.025 0.025"
+            material="cube_material"
+            mass="0.10"
+            friction="1.0 0.005 0.0001"
+            condim="4"/>
+
+    </body>
+
+    <!-- Fixed placement tray -->
+    <body name="placement_tray">
+
+      <!-- Tray bottom -->
+      <geom name="tray_bottom"
+            type="box"
+            pos="0.65 0.12 0.512"
+            size="0.13 0.11 0.01"
+            material="tray_material"
+           />
+
+      <!-- Tray walls -->
+      <geom name="tray_left_wall"
+            type="box"
+            pos="0.52 0.12 0.54"
+            size="0.01 0.11 0.03"
+            material="tray_material"/>
+
+      <geom name="tray_right_wall"
+            type="box"
+            pos="0.78 0.12 0.54"
+            size="0.01 0.11 0.03"
+            material="tray_material"/>
+
+      <geom name="tray_front_wall"
+            type="box"
+            pos="0.65 0.01 0.54"
+            size="0.12 0.01 0.03"
+            material="tray_material"/>
+
+      <geom name="tray_back_wall"
+            type="box"
+            pos="0.65 0.23 0.54"
+            size="0.12 0.01 0.03"
+            material="tray_material"/>
+
+    </body>
+
+    <!-- Camera target and fixed RGB camera -->
+    <body name="camera_target" pos="0.45 0 0.50"/>
+
+    <camera name="workcell_camera"
+            mode="targetbody"
+            target="camera_target"
+            pos="1.25 -1.35 1.20"
+            fovy="55"/>
+
+  </worldbody>
+
+</mujoco>
