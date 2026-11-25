@@ -42,3 +42,10 @@ Deep learning | PyTorch
 Training | Google Colab free GPU, if available
 Version control | Git and GitHub
 
+## Checklist
+
+- [X] Workspace setup.
+- [X] Add UR5e Arm model.
+- [X] Workcell (Environment) setup.
+- [ ] Robot manipulation. 
+
