@@ -140,4 +140,9 @@
 
   </worldbody>
 
+  <actuator>
+    <position name="left_finger_actuator" joint="left_finger_joint" kp="200" kv="10" ctrlrange="0 0.015"/>
+    <position name="right_finger_actuator" joint="right_finger_joint" kp="200" kv="10" ctrlrange="0 0.015"/>
+  </actuator>
+
 </mujoco>
