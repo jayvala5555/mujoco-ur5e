@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import time
 import mujoco
 import mujoco.viewer
 
@@ -24,6 +25,7 @@ def main():
     data = mujoco.MjData(model)
 
     # Start from the original UR5e home keyframe.
+    # get home keyframe id (home keyframe = some default position for robot e.g. for humanoid standing position actuator commands)
     home_id = get_id(
         model,
         mujoco.mjtObj.mjOBJ_KEY,
@@ -54,6 +56,11 @@ def main():
             mujoco.mjtObj.mjOBJ_CAMERA,
             "workcell_camera",
         ),
+        # is this correct way to get id of integrated parts of Arm?
+        "gripper": (
+            mujoco.mjtObj.mjOBJ_BODY,
+            "gripper_base",
+        ),
     }
 
     for label, (object_type, name) in required_objects.items():
@@ -73,7 +80,33 @@ def main():
     print("\nLaunching workcell viewer...")
     print("Close the viewer window to exit.")
 
-    mujoco.viewer.launch(model, data)
+    # mujoco.viewer.launch(model, data)
+
+    with mujoco.viewer.launch_passive(model, data) as viewer:
+        # Set your custom camera angle immediately after opening
+        with viewer.lock():
+            viewer.cam.azimuth = 179.41
+            viewer.cam.elevation = -23.65
+            viewer.cam.distance = 1.36
+            viewer.cam.lookat[:] = [0.3941, 0.0242, 0.6667] # Adjust [x, y, z] to center on your table/robot
+
+        # Keep the window open and interactive until you close it
+        while viewer.is_running():
+            step_start = time.time()
+
+            mujoco.mj_step(model, data)
+            viewer.sync()
+            
+            # Match real-time speed
+            time_until_next_step = model.opt.timestep - (time.time() - step_start)
+            if time_until_next_step > 0:
+                time.sleep(time_until_next_step)
+        
+        # Rotate/zoom to the view you like, then close the window to see the exact numbers:
+        # print(f"viewer.cam.azimuth = {viewer.cam.azimuth:.2f}")
+        # print(f"viewer.cam.elevation = {viewer.cam.elevation:.2f}")
+        # print(f"viewer.cam.distance = {viewer.cam.distance:.2f}")
+        # print(f"viewer.cam.lookat[:] = {list(viewer.cam.lookat)}")
 
 
 if __name__ == "__main__":
